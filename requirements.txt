@@ -1,0 +1,4 @@
+numpy>=1.26.4
+rasterio>=1.4a2
+scipy>=1.12.0
+rio-cogeo>=5.0.0
