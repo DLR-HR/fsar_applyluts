@@ -36,22 +36,22 @@ source .venv/bin/activate
 after the virtual environment is activated, install the tool either using HTTPS where you'll
 be asked to log in to your gitlab account:
 ```shell
-pip install git+https://gitlab.dlr.de/hr-caramba/fsar_applyluts.git
+pip install git+https://github.com/DLR-HR/fsar_applyluts.git
 ```
 or by using SSH, if you have linked an SSH key to your gitlab account:
 ```shell
-pip install git+ssh://git@gitlab.dlr.de/hr-caramba/fsar_applyluts.git
+pip install git+ssh://git@github.com:DLR-HR/fsar_applyluts.git
 ```
 
 ### cloning the tool (for developers)
 If you want to clone the tool to be able to change the code, first clone the git repository
 using HTTPS:
 ```shell
-git clone https://gitlab.dlr.de/hr-caramba/fsar_applyluts.git
+git clone https://github.com/DLR-HR/fsar_applyluts.git
 ```
 or with an SSH key:
 ```shell
-git clone git@gitlab.dlr.de:hr-caramba/fsar_applyluts.git
+git clone git@github.com:DLR-HR/fsar_applyluts.git
 ```
 
 <br>
@@ -87,7 +87,7 @@ and for Unix/macOS it would be:
 source .venv/bin/activate
 ```
 
-### Executing the tool
+### Running the tool
 
 Now you can execute the tool. The tool needs the path to the gtc-lut directory, where the lookup 
 tables are contained, as well as the path to the input file and the path where the output 
