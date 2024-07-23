@@ -40,7 +40,7 @@ pip install git+https://github.com/DLR-HR/fsar_applyluts.git
 ```
 or by using SSH, if you have linked an SSH key to your gitlab account:
 ```shell
-pip install git+ssh://git@github.com:DLR-HR/fsar_applyluts.git
+pip install git+ssh://git@github.com/DLR-HR/fsar_applyluts.git
 ```
 
 ### cloning the tool (for developers)

@@ -15,8 +15,27 @@ dependencies = [
     "rio-cogeo>=5.0.0"
 ]
 requires-python = ">= 3.10"
-description = "Python script to reraster data"
+description = "Command line tool for transforming F-SAR data from slant range to UTM grids and vice versa"
 readme = "README.md"
+
+classifiers = [
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3 :: Only",
+]
+
+authors = [
+    { name = "Jan Luca MERZ" }
+]
+
+maintainers = [
+    { name = "Jan Luca MERZ" },
+    { name = "Marc JAEGER" }
+]
+
+
+[project.urls]
+"Homepage" = "https://github.com/DLR-HR/fsar_applyluts"
+"Source" = "https://github.com/DLR-HR/fsar_applyluts"
 
 [project.scripts]
 apply_LUT = "fsar_applyLUTs.geocoding:main"
