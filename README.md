@@ -89,21 +89,30 @@ source .venv/bin/activate
 
 ### Running the tool
 
-Now you can execute the tool. The tool needs the path to the gtc-lut directory, where the lookup 
-tables are contained, as well as the path to the input file and the path where the output 
-file should be placed at, including a filename:
-```shell
-apply_LUT --gtc_lut /merz/Geocoding/GTC/GTC-LUT --input_file /merz/Geocoding/GTC/GTC-IMG/ampgeo_phh.tif --output_file /merz/output/gtc2sr.tif
-```
-Furthermore, there are optional arguments, you can give to the tool:
-* --order: order of the spline interpolation, has to be between 0-5. The default is 3 for floating point data and 0 for integer data.
-* --blocksize: the size per processed chunk of data. The default is 512
-* --geometry: type geo if you want to go from geocoded to slant range or sr if you want to go from slant range to geocoded.
-* --band: the frequency band of the input file The program will try to decide this itself based on your input file, if you type nothing
+The mapping between slantrange and geographic UTM grids is accomplished with the `apply_LUT` script. The command line flag `--help` gives an overview of the interface:
 
-If you want to receive this information about the arguments in the script you can use
 ```shell
-apply_LUT -h
+apply_LUT --help
+usage: apply_LUT [-h] [--dir {sr2geo,geo2sr}] --luts LUTS [--band {X,C,S,L,P,}] --in INPUT_FILE --out OUTPUT_FILE [--order ORDER] [--blocksize BLOCKSIZE]
+
+options:
+  -h, --help            show this help message and exit
+  --dir {sr2geo,geo2sr}
+                        sr2geo: map from slantrange to UTM grid (default); geo2sr: map from UTM grid to slantrange
+  --luts LUTS           path to the GTC-LUT directory
+  --band {X,C,S,L,P,}   The frequency band of the input file (defaults to '', which works when the geocoded product only contains one band)
+  --in INPUT_FILE       absolute path to the input file
+  --out OUTPUT_FILE     absolute path to the output file
+  --order ORDER         order of the spline interpolation, has to be between 0-5. The default is 3 for floating point data and 0 for integer data
+  --blocksize BLOCKSIZE
+                        the size per processed chunk of data. Defaults to 512
+```
+
+As an example taken from the `23GABONX` (aka AfriSAR-2) campaign, the following command will map in interferometric coherence in a secondary acquisition `23gabonx0906` 
+to the UTM grid of the primary acquisition `23gabonx0903`:
+
+```shell
+apply_LUT --luts=/data/23GABONX/FL09/PS03/TL01/GTC/GTC-LUT --in=/data/23GABONX/FL09/PS06/TL01/INF/INF-SR/coh_23gabonx0903_23gabonx0906_Lhh_tL01.tif --out=/data/23GABONX/FL09/PS03/TL01/GTC/GTC-IMG/cohgeo_23gabonx0903_23gabonx0906_Lhh_tL01.tif
 ```
 
 ### Deactivating the virtual environment
