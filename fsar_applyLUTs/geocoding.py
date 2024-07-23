@@ -29,6 +29,7 @@ import rio_cogeo
 import os, glob
 import scipy
 from rasterio.windows import Window
+import tempfile
 
 
 def get_lookup_tables(gtc_lut_path, band):
@@ -151,27 +152,29 @@ def process_blockwise(input_file, output_file, lookup_tables, to_slant_range, bl
             profile["transform"] = first_axis.profile["transform"]
             profile["crs"] = first_axis.profile["crs"]
 
-        with rasterio.io.MemoryFile() as memfile:
-            with memfile.open(**profile) as mem:
-                start = 0
-                end_ax1 = first_axis.shape[0]
-                end_ax2 = first_axis.shape[1]
+        with tempfile.NamedTemporaryFile() as f_tmp:
+            with rasterio.open(f_tmp.name, 'w', **profile) as rio_tmp:
+                pass
 
-                for offset_ax1 in range(start, end_ax1, blocksize):
-                    for offset_ax2 in range(start, end_ax2, blocksize):
-                        write_to_file(offset_ax1, offset_ax2, blocksize, order, first_axis, second_axis, input_file,
-                                      mem)
+            end_ax1 = first_axis.shape[0]
+            end_ax2 = first_axis.shape[1]
+            for offset_ax1 in range(0, end_ax1, blocksize):
+                for offset_ax2 in range(0, end_ax2, blocksize):
+                    with rasterio.open(f_tmp.name, 'r+') as rio_tmp:
+                        write_to_file(
+                            offset_ax1, offset_ax2, blocksize, order,
+                            first_axis, second_axis, input_file, rio_tmp
+                        )
 
-                dst_profile = rio_cogeo.cog_profiles.get("deflate")
-                dst_profile["interleave"] = "band"
-
-                rio_cogeo.cog_translate(
-                    mem,
-                    output_file,
-                    dst_profile,
-                    quiet=False,
-                )
-
+            dst_profile = rio_cogeo.cog_profiles.get("deflate")
+            dst_profile["interleave"] = "band"
+            with rasterio.open(f_tmp.name, 'r') as rio_tmp:
+                    rio_cogeo.cog_translate(
+                        rio_tmp,
+                        output_file,
+                        dst_profile,
+                        quiet=False,
+                    )
 
 
 def main():
