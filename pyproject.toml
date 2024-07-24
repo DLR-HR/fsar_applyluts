@@ -39,4 +39,4 @@ maintainers = [
 
 [project.scripts]
 applyLUT = "fsar_applyLUTs.geocoding:main"
-warp2LUT = "fsar_applyLUTs.resampling:main"
+map2LUT = "fsar_applyLUTs.resampling:main"
