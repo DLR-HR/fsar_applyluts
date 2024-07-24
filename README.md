@@ -89,7 +89,7 @@ source .venv/bin/activate
 
 ### Running the tool
 
-The mapping between slantrange and geographic UTM grids is accomplished with the `applyLUT` script. The command line flag `--help` gives an overview of the interface:
+The mapping between slant-range and geographic UTM grids is implemented in the `applyLUT` script. The command line flag `--help` gives an overview of the interface:
 
 ```shell
 applyLUT --help
@@ -120,7 +120,32 @@ It is important to note, that the inputs to `applyLUT` must match the original d
 - Input on a geographic grid must have the same dimensions and the same CRS as the `sr2geo` LUTs in `GTC-LUT`
 
 Since geographic input will often have a different extent or CRS in practice, the tool includes a second script 
-`map2LUT` for mapping raster data onto the LUT geometry. 
+`map2LUT` for mapping raster data with a different CRS or spatial sampling onto the LUT geometry. The command line 
+interface of `map2LUT` is similar to that of `applyLUT`:
+
+```shell
+map2LUT --help
+usage: map2LUT [-h] --luts LUTS [--band {X,C,S,L,P,}] [--nodata NODATA] --in INPUT_FILE --out OUTPUT_FILE
+
+options:
+  -h, --help           show this help message and exit
+  --luts LUTS          path to the GTC-LUT directory
+  --band {X,C,S,L,P,}  The frequency band of the input file (defaults to '', which works when the geocoded product only contains one band)
+  --nodata NODATA      no data value (defaults to -9999)
+  --in INPUT_FILE      absolute path to the input file
+  --out OUTPUT_FILE    absolute path to the output file
+```
+
+In the following example, the `map2LUT` and `applyLUT` scripts are used to transform a `utmdem` file from `GTC-LUT` 
+(which does not have the same sampling as the `sr2geo` LUTs) to slant-range:
+
+```shell
+map2LUT --luts=/data/23GABONX/FL09/PS03/TL01/GTC/GTC-LUT --in=/data/23GABONX/FL09/PS03/TL01/GTC/GTC-LUT/utmdem_23gabonx0903_L_tL01.tif --out=/data/23GABONX/FL09/PS03/TL01/GTC/GTC-LUT/utmdem_map2lut_23gabonx0903_L_tL01.tif
+applyLUT --dir=geo2sr --luts=/data/23GABONX/FL09/PS03/TL01/GTC/GTC-LUT --in=/data/23GABONX/FL09/PS03/TL01/GTC/GTC-LUT/utmdem_map2lut_23gabonx0903_L_tL01.tif --out=/data/23GABONX/FL09/PS03/TL01/RGI/RGI-SR/utmdem_23gabonx0903_L_tL01.tif
+```
+
+The first command maps the input UTM DEM to the LUT geometry and saves the result as 
+`utmdem_map2lut_23gabonx0903_L_tL01.tif`. The second command takes this file and maps it into slant-range geometry.
 
 ### Deactivating the virtual environment
 If you want to deactivate the virtual environment either close the command line or use:
