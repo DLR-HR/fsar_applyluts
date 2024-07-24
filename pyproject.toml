@@ -38,4 +38,5 @@ maintainers = [
 "Source" = "https://github.com/DLR-HR/fsar_applyluts"
 
 [project.scripts]
-apply_LUT = "fsar_applyLUTs.geocoding:main"
+applyLUT = "fsar_applyLUTs.geocoding:main"
+warp2LUT = "fsar_applyLUTs.resampling:main"
