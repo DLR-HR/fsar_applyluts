@@ -89,11 +89,11 @@ source .venv/bin/activate
 
 ### Running the tool
 
-The mapping between slantrange and geographic UTM grids is accomplished with the `apply_LUT` script. The command line flag `--help` gives an overview of the interface:
+The mapping between slantrange and geographic UTM grids is accomplished with the `applyLUT` script. The command line flag `--help` gives an overview of the interface:
 
 ```shell
-apply_LUT --help
-usage: apply_LUT [-h] [--dir {sr2geo,geo2sr}] --luts LUTS [--band {X,C,S,L,P,}] --in INPUT_FILE --out OUTPUT_FILE [--order ORDER] [--blocksize BLOCKSIZE]
+applyLUT --help
+usage: applyLUT [-h] [--dir {sr2geo,geo2sr}] --luts LUTS [--band {X,C,S,L,P,}] --in INPUT_FILE --out OUTPUT_FILE [--order ORDER] [--blocksize BLOCKSIZE]
 
 options:
   -h, --help            show this help message and exit
@@ -108,12 +108,19 @@ options:
                         the size per processed chunk of data. Defaults to 512
 ```
 
-As an example taken from the `23GABONX` (aka AfriSAR-2) campaign, the following command will map in interferometric coherence in a secondary acquisition `23gabonx0906` 
+As an example taken from the `23GABONX` (aka `AfriSAR-2`) campaign, the following command will map in interferometric coherence in a secondary acquisition `23gabonx0906` 
 to the UTM grid of the primary acquisition `23gabonx0903`:
 
 ```shell
-apply_LUT --luts=/data/23GABONX/FL09/PS03/TL01/GTC/GTC-LUT --in=/data/23GABONX/FL09/PS06/TL01/INF/INF-SR/coh_23gabonx0903_23gabonx0906_Lhh_tL01.tif --out=/data/23GABONX/FL09/PS03/TL01/GTC/GTC-IMG/cohgeo_23gabonx0903_23gabonx0906_Lhh_tL01.tif
+applyLUT --luts=/data/23GABONX/FL09/PS03/TL01/GTC/GTC-LUT --in=/data/23GABONX/FL09/PS06/TL01/INF/INF-SR/coh_23gabonx0903_23gabonx0906_Lhh_tL01.tif --out=/data/23GABONX/FL09/PS03/TL01/GTC/GTC-IMG/cohgeo_23gabonx0903_23gabonx0906_Lhh_tL01.tif
 ```
+
+It is important to note, that the inputs to `applyLUT` must match the original data **exactly**:
+- Slant-range input must have the same dimensions as the original SLCs (or amplitudes) in `RGI-SR`
+- Input on a geographic grid must have the same dimensions and the same CRS as the `sr2geo` LUTs in `GTC-LUT`
+
+Since geographic input will often have a different extent or CRS in practice, the tool includes a second script 
+`map2LUT` for mapping raster data onto the LUT geometry. 
 
 ### Deactivating the virtual environment
 If you want to deactivate the virtual environment either close the command line or use:
