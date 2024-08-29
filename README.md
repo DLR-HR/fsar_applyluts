@@ -115,6 +115,7 @@ to the UTM grid of the primary acquisition `23gabonx0702`:
 applyLUT --luts=/data/23GABONX/FL07/PS02/TL01/GTC/GTC-LUT --in=/data/23GABONX/FL07/PS06/TL01/INF/INF-SR/coh_23gabonx0702_23gabonx0706_Lhh_tL01.tif --out=/data/23GABONX/FL07/PS02/TL01/GTC/GTC-IMG/cohgeo_23gabonx0702_23gabonx0706_Lhh_tL01.tif
 ```
 ![sr2geo example](/doc/applyluts_sr2geo.png?raw=true "Geocoded F-SAR L-band HH-pol amplitude (left) and geocoded repeat-pass coherence (right)")
+The example result above shows a small part of the geocoded L-band amplitude (`GTC/GTC-IMG/ampgeo_23gabonx0702_Lhh_tL01.tif`, on the left) and the corresponding geocoded interferometric coherence obtaind with `applyLUT` (`GTC/GTC-IMG/cohgeo_23gabonx0702_23gabonx0706_Lhh_tL01.tif`, on the right). The data were opened in QGis to obtain these images.
 
 It is important to note, that the inputs to `applyLUT` must match the original data **exactly**:
 - Slant-range input must have the same dimensions as the original SLCs (or amplitudes) in `RGI-SR`
@@ -146,6 +147,9 @@ applyLUT --dir=geo2sr --luts=/data/23GABONX/FL07/PS06/TL01/GTC/GTC-LUT --in=/dat
 ```
 
 The first command maps the input S1A scene in COG format to the LUT geometry and saves the result in the `GTC-IMG` product component. This intermediate result is precisely co-registered (pixel-by-pixel) with the other geocoded imagery for this F-SAR data take. The second command takes this file and maps it into slant-range geometry, such that it is precisely co-registered (pixel-by-pixel) with other slant-range imagery such as the F-SAR backscatter amplitude.
+
+![geo2sr example](/doc/applyluts_geo2sr.png?raw=true "Slant-range F-SAR L-band VV-pol amplitude (left) and S1A C-band VV-pol amplitude (right)")
+The example result shows a small part of the slant-range L-band amplitude (`RGI/RGI-SR/amp_23gabonx0706_Lvv_tL01.tif`, on the left) and the corresponding Sentinel-1A C-band amplitude obtained from `applyLUT` (on the right). The data were opened in QGis to obtain these images.
 
 ### Deactivating the virtual environment
 If you want to deactivate the virtual environment either close the command line or use:
