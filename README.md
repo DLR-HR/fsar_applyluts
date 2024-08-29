@@ -108,18 +108,19 @@ options:
                         the size per processed chunk of data. Defaults to 512
 ```
 
-As an example taken from the `23GABONX` (aka `AfriSAR-2`) campaign, the following command will map in interferometric coherence in a secondary acquisition `23gabonx0906` 
-to the UTM grid of the primary acquisition `23gabonx0903`:
+As an example taken from the `23GABONX` (aka `AfriSAR-2`) campaign, the following command will map in interferometric coherence in a secondary acquisition `23gabonx0706` 
+to the UTM grid of the primary acquisition `23gabonx0702`:
 
 ```shell
-applyLUT --luts=/data/23GABONX/FL09/PS03/TL01/GTC/GTC-LUT --in=/data/23GABONX/FL09/PS06/TL01/INF/INF-SR/coh_23gabonx0903_23gabonx0906_Lhh_tL01.tif --out=/data/23GABONX/FL09/PS03/TL01/GTC/GTC-IMG/cohgeo_23gabonx0903_23gabonx0906_Lhh_tL01.tif
+applyLUT --luts=/data/23GABONX/FL07/PS02/TL01/GTC/GTC-LUT --in=/data/23GABONX/FL07/PS06/TL01/INF/INF-SR/coh_23gabonx0702_23gabonx0706_Lhh_tL01.tif --out=/data/23GABONX/FL07/PS02/TL01/GTC/GTC-IMG/cohgeo_23gabonx0702_23gabonx0706_Lhh_tL01.tif
 ```
+![sr2geo example](/doc/applyluts_sr2geo.png?raw=true "Geocoded F-SAR L-band HH-pol amplitude (left) and geocoded repeat-pass coherence (right)")
 
 It is important to note, that the inputs to `applyLUT` must match the original data **exactly**:
 - Slant-range input must have the same dimensions as the original SLCs (or amplitudes) in `RGI-SR`
 - Input on a geographic grid must have the same dimensions and the same CRS as the `sr2geo` LUTs in `GTC-LUT`
 
-Since geographic input will often have a different extent or CRS in practice, the tool includes a second script 
+Since external data on geographic grids will often have a different extent and/or CRS in practice, the tool includes a second script 
 `map2LUT` for mapping raster data with a different CRS or spatial sampling onto the LUT geometry. The command line 
 interface of `map2LUT` is similar to that of `applyLUT`:
 
@@ -136,16 +137,15 @@ options:
   --out OUTPUT_FILE    absolute path to the output file
 ```
 
-In the following example, the `map2LUT` and `applyLUT` scripts are used to transform a `utmdem` file from `GTC-LUT` 
-(which does not have the same sampling as the `sr2geo` LUTs) to slant-range:
+In the following example, the `map2LUT` and `applyLUT` scripts are used to transform a geocoded Sentinel-1A C-band image into  
+the slant-range geometry of an F-SAR L-band acquisition:
 
 ```shell
-map2LUT --luts=/data/23GABONX/FL09/PS03/TL01/GTC/GTC-LUT --in=/data/23GABONX/FL09/PS03/TL01/GTC/GTC-LUT/utmdem_23gabonx0903_L_tL01.tif --out=/data/23GABONX/FL09/PS03/TL01/GTC/GTC-LUT/utmdem_map2lut_23gabonx0903_L_tL01.tif
-applyLUT --dir=geo2sr --luts=/data/23GABONX/FL09/PS03/TL01/GTC/GTC-LUT --in=/data/23GABONX/FL09/PS03/TL01/GTC/GTC-LUT/utmdem_map2lut_23gabonx0903_L_tL01.tif --out=/data/23GABONX/FL09/PS03/TL01/RGI/RGI-SR/utmdem_23gabonx0903_L_tL01.tif
+map2LUT --luts=/data/23GABONX/FL07/PS06/TL01/GTC/GTC-LUT --in=/data/S1A/S1A_IW_GRDH_1SDV_20240805T050738_20240805T050803_055073_06B5B2_4C6D_COG.SAFE/measurement/s1a-iw-grd-vv-20240805t050738-20240805t050803-055073-06b5b2-001-cog.tiff --out=/data/23GABONX/FL07/PS06/TL01/GTC/GTC-IMG/s1a-iw-grd-vv-20240805t050738-20240805t050803-055073-06b5b2-001-cog.tiff
+applyLUT --dir=geo2sr --luts=/data/23GABONX/FL07/PS06/TL01/GTC/GTC-LUT --in=/data/23GABONX/FL07/PS06/TL01/GTC/GTC-IMG/s1a-iw-grd-vv-20240805t050738-20240805t050803-055073-06b5b2-001-cog.tiff --out=/data/23GABONX/FL07/PS06/TL01/RGI/RGI-SR/s1a-iw-grd-vv-20240805t050738-20240805t050803-055073-06b5b2-001-cog.tiff
 ```
 
-The first command maps the input UTM DEM to the LUT geometry and saves the result as 
-`utmdem_map2lut_23gabonx0903_L_tL01.tif`. The second command takes this file and maps it into slant-range geometry.
+The first command maps the input S1A scene in COG format to the LUT geometry and saves the result in the `GTC-IMG` product component. This intermediate result is precisely co-registered (pixel-by-pixel) with the other geocoded imagery for this F-SAR data take. The second command takes this file and maps it into slant-range geometry, such that it is precisely co-registered (pixel-by-pixel) with other slant-range imagery such as the F-SAR backscatter amplitude.
 
 ### Deactivating the virtual environment
 If you want to deactivate the virtual environment either close the command line or use:
