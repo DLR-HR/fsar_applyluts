@@ -145,12 +145,13 @@ def process_blockwise(input_file, output_file, lookup_tables, to_slant_range, bl
             order = default_order
 
         # make a profile for the output file and open the output file
-
-        profile = {"driver": "GTiff", "dtype": input_file.dtypes[0], "height": first_axis.shape[0],
-                   "width": first_axis.shape[1], "count": input_file.profile["count"]}
-        if not to_slant_range:
-            profile["transform"] = first_axis.profile["transform"]
-            profile["crs"] = first_axis.profile["crs"]
+        profile = {
+            "driver": "GTiff", "dtype": input_file.dtypes[0],
+            "height": first_axis.shape[0], "width": first_axis.shape[1],
+            "count": input_file.profile["count"],
+            "crs": first_axis.profile["crs"],
+            "transform": first_axis.profile["transform"]
+        }
 
         with tempfile.NamedTemporaryFile() as f_tmp:
             with rasterio.open(f_tmp.name, 'w', **profile) as rio_tmp:
@@ -166,13 +167,14 @@ def process_blockwise(input_file, output_file, lookup_tables, to_slant_range, bl
                             first_axis, second_axis, input_file, rio_tmp
                         )
 
-            dst_profile = rio_cogeo.cog_profiles.get("deflate")
+            dst_profile = rio_cogeo.cog_profiles.get("raw")
             dst_profile["interleave"] = "band"
             with rasterio.open(f_tmp.name, 'r') as rio_tmp:
                     rio_cogeo.cog_translate(
                         rio_tmp,
                         output_file,
                         dst_profile,
+                        overview_level=0,
                         quiet=False,
                     )
 
