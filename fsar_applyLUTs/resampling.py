@@ -53,7 +53,7 @@ def main():
         with rio.open(f_tmp.name, 'w', **ds_in[0].profile) as rio_tmp:
             ds_co = [ds_in[0], rio_tmp]
             riow.reproject(rio.band(ds_in[1],1), rio.band(ds_co[1],1),
-                           src_nodata=args.nodata, dst_nodata=args.nodata,
+                           src_nodata=ds_in[1].nodata, dst_nodata=args.nodata,
                            resampling=riow.Resampling.lanczos)
 
 
