@@ -9,7 +9,7 @@ build-backend = "hatchling.build"
 name = "fsar_applyLUTs"
 version = "1.0.0"
 dependencies = [
-    "numpy>=1.26.4.0",
+    "numpy>=2.0",
     "rasterio>=1.4a2",
     "scipy>=1.12.0",
     "rio-cogeo>=5.0.0"
@@ -19,7 +19,6 @@ description = "Command line tool for transforming F-SAR data from slant range to
 readme = "README.md"
 
 classifiers = [
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3 :: Only",
 ]
 
