@@ -1,5 +1,5 @@
 # fsar_applyLUTs
-A command line tool for transforming synthetic aperture radar data acquired by the [F-SAR sensor](https://www.dlr.de/en/hr/research-transfer/projects/project-f-sar) that is operated by the [Microwaves and Radar Institute](https://www.dlr.de/en/hr) of the [German Aerospace Center](https://www.dlr.de/).
+A command line tool for transforming synthetic aperture radar data acquired by the [F-SAR sensor](https://www.dlr.de/en/hr/research-transfer/projects/project-f-sar) that is operated by the [Microwaves and Radar Institute](https://www.dlr.de/en/hr) of the [German Aerospace Center](https://www.dlr.de/en).
 
 The tool maps data from radar slant range to geocoded grids and vice versa using the look-up-tables (LUTs) that are provided with processed F-SAR data. The mapping from geographic grids to slant range requires LUTs that are only available for F-SAR data newer than 2023.
 
