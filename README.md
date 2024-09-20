@@ -1,5 +1,7 @@
 # fsar_applyLUTs
-Command line tool for mapping data from radar slant range to geocoded grids and vice versa using the look-up-tables (LUTs) provided with F-SAR data. The mapping from the geographic grids to slant range is requires LUTs that are generally only available for F-SAR data newer than 2023.
+A command line tool for transforming synthetic aperture radar data acquired by the [F-SAR sensor](https://www.dlr.de/en/hr/research-transfer/projects/project-f-sar) that is operated by the [Microwaves and Radar Institute](https://www.dlr.de/en/hr) of the [German Aerospace Center](https://www.dlr.de/).
+
+The tool maps data from radar slant range to geocoded grids and vice versa using the look-up-tables (LUTs) that are provided with processed F-SAR data. The mapping from geographic grids to slant range requires LUTs that are only available for F-SAR data newer than 2023.
 
 ## Installation and setup
 To install the tool, we first have to create and activate a virtual python environment.
