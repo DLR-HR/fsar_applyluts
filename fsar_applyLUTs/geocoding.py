@@ -31,6 +31,8 @@ import scipy
 from rasterio.windows import Window
 import tempfile
 
+from . import init_logging
+
 
 def get_lookup_tables(gtc_lut_path, band):
     """
@@ -115,7 +117,10 @@ def write_to_file(offset_ax1, offset_ax2, blocksize, order, first_axis, second_a
                     dst.write(output, i, window=window)
 
 
-def process_blockwise(input_file, output_file, lookup_tables, to_slant_range, blocksize, order, default_order):
+def process_blockwise(
+        input_file, output_file, lookup_tables,
+        to_slant_range, blocksize, order, default_order,
+        log=None):
     """
     function that opens the output file, as well as the input file and the necessary lookup tables and iterates over
     the data to enable blockwise processing
@@ -126,6 +131,7 @@ def process_blockwise(input_file, output_file, lookup_tables, to_slant_range, bl
     :param blocksize: the size of one block of data
     :param order: the order of the spline interpolation
     :param default_order: the default order of the spline interpolation (applied when order is None)
+    :param log: optional logger for progress messages
     """
 
     if to_slant_range:
@@ -157,16 +163,20 @@ def process_blockwise(input_file, output_file, lookup_tables, to_slant_range, bl
             with rasterio.open(f_tmp.name, 'w', **profile) as rio_tmp:
                 pass
 
-            end_ax1 = first_axis.shape[0]
-            end_ax2 = first_axis.shape[1]
-            for offset_ax1 in range(0, end_ax1, blocksize):
-                for offset_ax2 in range(0, end_ax2, blocksize):
+            n_ax = [s//blocksize for s in first_axis.shape]
+            for idx_ax1 in range(n_ax[0]):
+                for idx_ax2 in range(n_ax[1]):
+                    if log is not None:
+                        log.info(f'mapping block ({idx_ax1+1}/{n_ax[0]},{idx_ax2+1}/{n_ax[1]})')
                     with rasterio.open(f_tmp.name, 'r+') as rio_tmp:
+                        offset = [blocksize*idx for idx in (idx_ax1, idx_ax2)]
                         write_to_file(
-                            offset_ax1, offset_ax2, blocksize, order,
+                            *offset, blocksize, order,
                             first_axis, second_axis, input_file, rio_tmp
                         )
 
+            if log is not None:
+                log.info('converting GeoTiff -> COG')
             dst_profile = rio_cogeo.cog_profiles.get("raw")
             dst_profile["interleave"] = "band"
             with rasterio.open(f_tmp.name, 'r') as rio_tmp:
@@ -207,7 +217,8 @@ def main():
 
     process_blockwise(
         args.input_file, args.output_file, lookup_tables, args.dir == "geo2sr",
-        args.blocksize, args.order, default_order
+        args.blocksize, args.order, default_order,
+        log=init_logging()
     )
 
 

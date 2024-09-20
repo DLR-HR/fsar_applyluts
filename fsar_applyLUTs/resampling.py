@@ -28,6 +28,7 @@ import rio_cogeo
 import tempfile
 
 from .geocoding import get_lookup_tables
+from . import init_logging
 
 def main():
     DUMMY = -9999
@@ -49,14 +50,17 @@ def main():
     lookup_tables = get_lookup_tables(args.luts, args.band)
     ds_in = [rio.open(f) for f in (lookup_tables['sr2geo_az'], args.input_file)]
 
+    log = init_logging()
+
     with tempfile.NamedTemporaryFile() as f_tmp:
+        log.info('re-projecting input')
         with rio.open(f_tmp.name, 'w', **ds_in[0].profile) as rio_tmp:
             ds_co = [ds_in[0], rio_tmp]
             riow.reproject(rio.band(ds_in[1],1), rio.band(ds_co[1],1),
                            src_nodata=ds_in[1].nodata, dst_nodata=args.nodata,
                            resampling=riow.Resampling.lanczos)
 
-
+        log.info('converting GeoTiff -> COG')
         dst_profile = rio_cogeo.cog_profiles.get("deflate")
         dst_profile["interleave"] = "band"
         with rio.open(f_tmp.name, 'r') as rio_tmp:
