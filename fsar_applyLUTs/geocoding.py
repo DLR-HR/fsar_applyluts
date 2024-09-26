@@ -49,7 +49,8 @@ def get_lookup_tables(gtc_lut_path, band):
     lookup_tables = {}
     for lut in lut_names:
         lut_files = glob.glob(os.path.join(gtc_lut_path, lut)+'*')
-        lut_files = [f for f in lut_files if re.search(band_re, f) is not None]
+        lut_files = [f for f in lut_files if re.search(band_re, f) is not None] # select frequency band
+        lut_files = [f for f in lut_files if not f.endswith('.hdr')]            # filter ENVI hdr files
         if len(lut_files) > 1:
             raise ValueError(f'Multiple "{lut}" LUTs found. Specify frequency band with --band!')
         elif len(lut_files) == 0:
