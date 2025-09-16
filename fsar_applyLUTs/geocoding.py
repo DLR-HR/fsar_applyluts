@@ -43,7 +43,7 @@ def get_lookup_tables(gtc_lut_path, band):
     filename_band i.e. sr2geo_az_P
     """
 
-    lut_names = ["sr2geo_az", "sr2geo_rg", "geo2sr_east", "geo2sr_north"]
+    lut_names = ["sr2geo_az", "sr2geo_rg", "geo2sr_east", "geo2sr_north", "ell2sr_lat", "ell2sr_lon", "sr2ell_az", "sr2ell_rg"]
     band_re = f"_{band.upper()}_" if len(band) > 0 else r"_(X|C|S|L|P)_"
 
     lookup_tables = {}
@@ -55,6 +55,17 @@ def get_lookup_tables(gtc_lut_path, band):
             raise ValueError(f'Multiple "{lut}" LUTs found. Specify frequency band with --band!')
         elif len(lut_files) == 0:
             continue
+
+        if "2sr" in lut:
+            if "east" in lut or "lat" in lut:
+                lut = "georef2sr_x" # x is latitude or easting
+            elif "north" in lut or "lon" in lut:
+                lut = "georef2sr_y" # y is longitude or northing
+        elif "2geo" in lut or "2ell" in lut:
+            if "az" in lut:
+                lut = "sr2georef_az"
+            elif "rg" in lut:
+                lut = "sr2georef_rg"
         lookup_tables[lut] = lut_files[0]
 
     return lookup_tables
@@ -136,9 +147,9 @@ def process_blockwise(
     """
 
     if to_slant_range:
-        coordinates = (lookup_tables["geo2sr_north"], lookup_tables["geo2sr_east"])
+        coordinates = (lookup_tables["georef2sr_y"], lookup_tables["georef2sr_x"])
     else:
-        coordinates = (lookup_tables["sr2geo_az"], lookup_tables["sr2geo_rg"])
+        coordinates = (lookup_tables["sr2georef_az"], lookup_tables["sr2georef_rg"])
 
     # open the input file and the lookup tables
 
@@ -157,7 +168,7 @@ def process_blockwise(
             "height": first_axis.shape[0], "width": first_axis.shape[1],
             "count": input_file.profile["count"],
             "crs": first_axis.profile["crs"],
-            "transform": first_axis.profile["transform"]
+            "transform": rasterio.transform.from_origin(0, -1, 1, 1) if to_slant_range else first_axis.profile["transform"]
         }
 
         with tempfile.NamedTemporaryFile() as f_tmp:
