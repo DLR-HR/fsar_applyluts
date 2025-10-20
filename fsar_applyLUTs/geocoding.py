@@ -107,12 +107,12 @@ def write_to_file(offset_ax1, offset_ax2, blocksize, order, first_axis, second_a
     ax1_window = first_axis.read(window=window)[0, ...]
 
     # skip this block if there are no coordinates (positive values) in it
-    if (ax1_window > 0).any():
+    if (ax1_window >= 0).any():
         ax2_window = second_axis.read(window=window)[0, ...]
 
-        if (ax2_window > 0).any():
+        if (ax2_window >= 0).any():
 
-            # window has to be reinitialized at this point to ensure that it's not going out of bounds of the output file
+            # window has to be reinitialized at this point to ensure that it's not exceeding the bounds of the output file
             window = Window(offset_ax2, offset_ax1, ax1_window.shape[1], ax1_window.shape[0])
 
             min_ax1, width = calculate_window_limits(ax1_window, input_file.shape[0])
@@ -175,7 +175,7 @@ def process_blockwise(
             with rasterio.open(f_tmp.name, 'w', **profile) as rio_tmp:
                 pass
 
-            n_ax = [s//blocksize for s in first_axis.shape]
+            n_ax = [s//blocksize + (s % blocksize > 0) for s in first_axis.shape]
             for idx_ax1 in range(n_ax[0]):
                 for idx_ax2 in range(n_ax[1]):
                     if log is not None:
